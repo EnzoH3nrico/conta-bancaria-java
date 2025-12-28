@@ -1,2 +1,16 @@
-# conta-bancaria-java
-Criei esta aplicação simples, com o aprendizado absorvido na plataforma "Alura". A aplicação é um sistema bancário simples, para averiguar o saldo e as opções que tem-se a partir dele.
+# Sistema Bancário em Java
+
+Projeto simples em Java para simular operações bancárias via terminal.
+
+## Funcionalidades
+- Consulta de saldo
+- Recebimento de valor
+- Transferência de valor
+- Menu interativo
+
+## Tecnologias
+- Java
+- Scanner (entrada de dados)
+
+## Objetivo
+Projeto educacional para praticar estruturas de controle, loops e entrada de dados em Java.
