@@ -6,4 +6,5 @@ public class Transferir extends DadosBancarios implements ColocarSaldo{
     public double colocarSaldo(double valor) {
         return saldo -= valorTranferido;
     }
+
 }
