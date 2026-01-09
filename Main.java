@@ -1,99 +1,108 @@
-
 import java.util.Scanner;
 
 public class Main{
-    public static void main(String[] args){
-
+    public static void main(String[] args) {
         //Etapa inicial, onde rodará o valor inserido do usuário.
+        Scanner scan = new Scanner(System.in);
+        ConsultarDados consultarDados = new ConsultarDados();
 
-        Scanner leitura_de_valor = new Scanner(System.in);
-
-        System.out.println("\nOlá! Por favor, digite um valor para começarmos.");
-
-        double valor_do_usuario = leitura_de_valor.nextDouble();
-
-        leitura_de_valor.nextLine();
-
-        //parte da condicional, para averiguar o saldo do usuário, e abordar dois métodos distintos.
-
-        if(valor_do_usuario == 0){
-
-            //Neste processo, o código aplicará um novo saldo ao usuário, para futuras aplicações com o saldo.
-
-            System.out.println("Vejo que não há saldo em sua conta! Por favor, insira um valor.");
-
-            double novo_dado = leitura_de_valor.nextDouble();
-
-            valor_do_usuario = novo_dado;
-
-            System.out.println("Ótimo! Seu novo saldo é " + valor_do_usuario);
-        }
-
-        if(valor_do_usuario > 0){
-
-                System.out.println("\nSeja bem vindo novamente! O que deseja consultar?");
+        //coloquei esses booleans, para quebrar alguns loops
+        boolean registrado = false;
+        boolean registroCPF = false;
+        boolean encerrar = false;
+        boolean continuarPrograma = true;
 
 
-                System.out.println("\nSaldo: xxxxxxxx");
+        //decidi colocar um loop, para que o código continue funcionando
+        do{
+            System.out.println("""
+                    \nOlá! Você tem algum dado salvo em nosso sistema?
+                    [1]Sim
+                    [2]Não
+                    \n""");
+
+            String valor1 = scan.nextLine();
 
 
-                do{
-                String opcoes_de_escolha = """
-                        
-                        1- Consultar dados
-                        2- Receber valor
-                        3- Transferir valor
-                        4- sair
-                        
-                        Digite a opção desejada
-                        """;
+            //esta parte, irá cadastrar todos os dados do usuário, e armazena-los
+            if (valor1.equalsIgnoreCase("Não") || valor1.equals("2") && !registrado) {
+                System.out.println("Vejo que você não possui dados aqui, então vamos começar! Para começarmos, digite seu nome");
+                String novoNome = scan.nextLine();
 
-                System.out.println(opcoes_de_escolha);
+                consultarDados.nome = novoNome;
 
-                String escolha_do_usuario = leitura_de_valor.nextLine();
+                //coloquei um loop aqui, para evitar que o cpf seja armazenado, mesmo com strings ou hashs
+                do {
+                    System.out.print("Digite o CPF (11 números): ");
+                    String novoCpf = scan.nextLine();
 
-                switch (escolha_do_usuario) {
+                    if (novoCpf.length() != 11) {
+                        System.out.println("Isso não é permitido! Tente novamente\n");
+                    } else {
+                        System.out.println("CPF registrado com sucesso!\n");
+                        registroCPF = true;
+                        consultarDados.setCpf(novoCpf);
+                    }
 
-                    case "1":
-                        //Aqui mostratá o saldo do usuário
-                        System.out.println("Seu saldo atual é: " + valor_do_usuario);
-                        break;
-                    case "2":
-                        //para caso do usuário receber transfêrencias, aqui seria um validador.
-                        System.out.println("Você não recebeu transferência ainda!");
-                        break;
-                    case "3":
+                } while (!registroCPF);
 
-                        // Valida o saldo antes de permitir a transferência
-                        System.out.println("Ótimo! Digite o valor desejado.");
+                //parte da senha, somente uma String
+                System.out.println("Para finalizarmos, digite uma senha");
 
-                        double transferir_valor = leitura_de_valor.nextDouble();
+                String novaSenha = scan.nextLine();
 
-                        leitura_de_valor.nextLine();
+                System.out.println("Senha registrada com Sucesso, você está registrado");
 
-                        valor_do_usuario -= transferir_valor;
+                consultarDados.setSenha(novaSenha);
 
-                        if (transferir_valor > valor_do_usuario) {
-                            System.out.println("Você não pode finalizar esta transferência! Saldo insuficiente.");
+                registrado = true;
+
+
+            } else if (valor1.equalsIgnoreCase("Sim") || valor1.equals("1")) {
+
+                //mesmo esquema de deixar em loop, para evitar erros
+                do {
+                    System.out.println("""
+                            Sejá bem-vindo de volta! O que deseja consultar?
+                            [1] Consultar dados
+                            [2] Transferir valor
+                            [3] sair
+                            
+                            \n""");
+
+                    String valor2 = scan.nextLine();
+
+                    //aqui eu consulto os dados, através de uma classe, para evitar dados sensíveis
+                    if (valor2.equalsIgnoreCase("consultar dados") || valor2.equals("1")) {
+                        consultarDados.dadosPessoais();
+
+                    } else if (valor2.equalsIgnoreCase("transferir valor") || valor2.equals("2")) {
+                        Transferir transferir = new Transferir();
+
+                        System.out.println("\n Quanto deseja transferir?");
+
+                        double valor3 = scan.nextDouble();
+
+                        scan.nextLine();
+
+                        //condicional, para evitar saldo negativo de transferência
+                        if(valor3 > consultarDados.getSaldo()){
+                            System.out.println("Você não possuí saldo suficiente!");
                         } else {
-                            valor_do_usuario -= transferir_valor;
-                            System.out.println("Seu saldo atual é: " + valor_do_usuario);
+                            transferir.colocarSaldo(valor3);
                         }
-                        break;
-                    case "4":
-                        //Caso o usuário queira sair, isto finalizará o programa,.
-                        System.out.println("Encerrando serviços...");
-                        valor_do_usuario = 0;
-                        break;
 
-                    default:
-                        //caso nenhum valor seja selecionado, ele alertará o usuário.
-                        System.out.println("Valor indisponível! tente novamente.");
-                }
+                        //aqui o código se encerrará
+                    } else if (valor2.equalsIgnoreCase("sair") || valor2.equals("3")) {
+                        System.out.println("Encerrando...");
+                        encerrar = true;
+                        continuarPrograma = false;
+                    } else {
+                        System.out.println("Este valor não existe! Tente novamente");
+                    }
+                }while(!continuarPrograma);
             }
-                //Aqui acabará a aplicação, caso o valor do usuário chegue a zero, igual ao "case 4".
-            while(valor_do_usuario != 0);
-        }
-        leitura_de_valor.close();
+        }while (!encerrar) ;
     }
 }
+
