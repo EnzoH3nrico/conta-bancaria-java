@@ -1,17 +1,20 @@
 import java.util.Scanner;
 
+
 public class Main{
     public static void main(String[] args) {
         //Etapa inicial, onde rodará o valor inserido do usuário.
         Scanner scan = new Scanner(System.in);
         ConsultarDados consultarDados = new ConsultarDados();
+        Transferir transferir = new Transferir(consultarDados);
+
 
         //coloquei esses booleans, para quebrar alguns loops
         boolean registrado = false;
         boolean registroCPF = false;
         boolean encerrar = false;
         boolean continuarPrograma = true;
-
+        double meuValor;
 
         //decidi colocar um loop, para que o código continue funcionando
         do{
@@ -47,13 +50,22 @@ public class Main{
                 } while (!registroCPF);
 
                 //parte da senha, somente uma String
-                System.out.println("Para finalizarmos, digite uma senha");
+                System.out.println("Digite uma senha");
 
                 String novaSenha = scan.nextLine();
 
-                System.out.println("Senha registrada com Sucesso, você está registrado");
+                System.out.println("Senha registrada com Sucesso, você está registrado\n");
 
                 consultarDados.setSenha(novaSenha);
+
+                System.out.println("Estamos em beta. Por favor, digite um valor de saldo para trabalharmos com ele.");
+
+                double novoValor = scan.nextDouble();
+
+                consultarDados.colocarSaldo(novoValor);
+
+                System.out.println("\nFinalizamos tudo! Pode continuar.");
+
 
                 registrado = true;
 
@@ -66,7 +78,8 @@ public class Main{
                             Sejá bem-vindo de volta! O que deseja consultar?
                             [1] Consultar dados
                             [2] Transferir valor
-                            [3] sair
+                            [3] Consultar transferências
+                            [4] sair
                             
                             \n""");
 
@@ -77,7 +90,6 @@ public class Main{
                         consultarDados.dadosPessoais();
 
                     } else if (valor2.equalsIgnoreCase("transferir valor") || valor2.equals("2")) {
-                        Transferir transferir = new Transferir();
 
                         System.out.println("\n Quanto deseja transferir?");
 
@@ -86,14 +98,21 @@ public class Main{
                         scan.nextLine();
 
                         //condicional, para evitar saldo negativo de transferência
-                        if(valor3 > consultarDados.getSaldo()){
+                        if (valor3 > consultarDados.getSaldo()) {
                             System.out.println("Você não possuí saldo suficiente!");
                         } else {
-                            transferir.colocarSaldo(valor3);
+                            transferir.transferir(valor3);
                         }
 
-                        //aqui o código se encerrará
-                    } else if (valor2.equalsIgnoreCase("sair") || valor2.equals("3")) {
+
+                    }else if(valor2.equalsIgnoreCase("Consultar transferências") || valor2.equals("3")){
+                        System.out.println("---Valores transferidos---");
+                        for (Double valoresTransferido : transferir.getValoresTransferidos()) {
+                            System.out.println(valoresTransferido);
+                        }
+                    }
+
+                    else if (valor2.equalsIgnoreCase("sair") || valor2.equals("4")) {
                         System.out.println("Encerrando...");
                         encerrar = true;
                         continuarPrograma = false;
