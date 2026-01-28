@@ -1,12 +1,17 @@
+import java.io.IOException;
+import java.util.*;
+import java.net.http.*;
 import java.util.Scanner;
 
 
 public class Main{
+
     public static void main(String[] args) {
         //Etapa inicial, onde rodará o valor inserido do usuário.
         Scanner scan = new Scanner(System.in);
         ConsultarDados consultarDados = new ConsultarDados();
         Transferir transferir = new Transferir(consultarDados);
+        ArmazenamentoAPI http = new ArmazenamentoAPI();
 
 
         //coloquei esses booleans, para quebrar alguns loops
@@ -15,6 +20,7 @@ public class Main{
         boolean encerrar = false;
         boolean continuarPrograma = true;
         double meuValor;
+
 
         //decidi colocar um loop, para que o código continue funcionando
         do{
@@ -79,7 +85,8 @@ public class Main{
                             [1] Consultar dados
                             [2] Transferir valor
                             [3] Consultar transferências
-                            [4] sair
+                            [4] Converter saldo
+                            [5] sair
                             
                             \n""");
 
@@ -110,9 +117,31 @@ public class Main{
                         for (Double valoresTransferido : transferir.getValoresTransferidos()) {
                             System.out.println(valoresTransferido);
                         }
-                    }
+                    } else if(valor2.equalsIgnoreCase("Converter saldo") || valor2.equals("4")){
+                        try{
+                        System.out.println("Digite uma moeda para converter");
 
-                    else if (valor2.equalsIgnoreCase("sair") || valor2.equals("4")) {
+                        var meuHTTP = scan.nextLine().toUpperCase() ;
+
+                        MoedasAPI novoRecordTeste = http.acharRecord(meuHTTP);
+                        double valor = consultarDados.getSaldo();
+
+                        System.out.println("Digite a moeda destino (ex: BRL):");
+                        String destino = consultarDados.escolherMoeda(scan.nextLine().toUpperCase());
+
+                        Double taxa = novoRecordTeste.conversion_rates().get(destino);
+
+                        System.out.println(valor + " " + novoRecordTeste.base_code() +
+                                " = " + (valor * taxa) + " " + destino);
+
+                        Documentacao salvar = new Documentacao();
+
+                            salvar.modDocumentacao(novoRecordTeste);
+                        } catch (IOException e) {
+                            throw new RuntimeException("Deu erro");
+                        }
+
+                    }else if (valor2.equalsIgnoreCase("sair") || valor2.equals("5")) {
                         System.out.println("Encerrando...");
                         encerrar = true;
                         continuarPrograma = false;

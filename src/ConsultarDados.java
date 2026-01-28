@@ -20,6 +20,11 @@ public class ConsultarDados extends DadosBancarios implements ColocarSaldo{
         return saldo;
     }
 
+    @Override
+    public String escolherMoeda(String moeda) {
+        return moeda.trim().toUpperCase();
+    }
+
 
 
     public void dadosPessoais(){
